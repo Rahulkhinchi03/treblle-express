@@ -20,6 +20,7 @@ function treblle({
   apiKey = process.env.TREBLLE_API_KEY,
   projectId = process.env.TREBLLE_PROJECT_ID,
   additionalFieldsToMask = [],
+  blacklistPaths = [],
 } = {}) {
   return function treblleMiddleware(req, res, next) {
     // Track when this request was received.
@@ -33,6 +34,12 @@ function treblle({
     }
 
     res.on('finish', function onceFinish() {
+      // Check if the request path is blacklisted
+      const isPathBlacklisted = blacklistPaths.some((path) => req.originalUrl.includes(path))
+      if (isPathBlacklisted) {
+        return next()
+      }
+
       let errors = []
       const body = req.body || {}
       const query = req.query || {}
@@ -82,6 +89,7 @@ function treblle({
         }
       )
       try {
+        console.log('Treblle payload', trebllePayload)
         sendPayloadToTreblle(trebllePayload, apiKey)
       } catch (error) {
         console.log(error)
