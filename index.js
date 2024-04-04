@@ -13,7 +13,7 @@ module.exports = treblle
 
 /**
  * Expose the Treblle middleware
- * @param {{apiKey?: string, projectId?: string, additionalFieldsToMask?: string[]}} options - Middleware options.
+ * @param {{apiKey?: string, projectId?: string, additionalFieldsToMask?: string[], blacklistPaths?: (string[]|RegExp)}} options - Middleware options.
  * @returns {Function} - treblle-express middleware.
  */
 function treblle({
@@ -35,7 +35,11 @@ function treblle({
 
     res.on('finish', function onceFinish() {
       // Check if the request path is blacklisted
-      const isPathBlacklisted = blacklistPaths.some((path) => req.originalUrl.includes(path))
+      const isPathBlacklisted =
+        blacklistPaths instanceof RegExp
+          ? blacklistPaths.test(req.path)
+          : blacklistPaths.some((path) => req.path.startsWith(`/${path}`))
+
       if (isPathBlacklisted) {
         return next()
       }
