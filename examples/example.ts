@@ -1,17 +1,13 @@
-require('dotenv').config()
-const express = require('express')
+import dotenv from 'dotenv'
+import express, { Request, Response } from 'express'
+import bodyParser from 'body-parser'
+import treblle from '@treblle/express'
 
-// Dont forget to install body-parser with -- npm i body-parser
-const bodyParser = require('body-parser')
+dotenv.config()
 const app = express()
 const PORT = 3000
-const treblle = require('..')
 
 app.use(bodyParser.json())
-
-// Don't forget to set your Treblle API Key and Project ID in .env file
-// TREBLLE_API_KEY=your-api-key
-// TREBLLE_PROJECT_ID=your-project-id
 
 app.use(
   treblle({
@@ -20,15 +16,15 @@ app.use(
   })
 )
 
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
   res.send({ message: 'Hello World!' })
 })
 
-app.get('/test/message', (req, res) => {
+app.get('/test/message', (req: Request, res: Response) => {
   res.send({ message: 'Hello Test!' })
 })
 
-app.post('/test', (req, res) => {
+app.post('/test', (req: Request, res: Response) => {
   const inputData = req.body
 
   // Process your inputData here
