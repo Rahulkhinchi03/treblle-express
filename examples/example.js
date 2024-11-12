@@ -13,12 +13,27 @@ app.use(bodyParser.json())
 // TREBLLE_API_KEY=your-api-key
 // TREBLLE_PROJECT_ID=your-project-id
 
+console.log('TREBLLE_API_KEY:', process.env.TREBLLE_API_KEY)
+console.log('TREBLLE_PROJECT_ID:', process.env.TREBLLE_PROJECT_ID)
+
 app.use(
   treblle({
-    additionalFieldsToMask: ['password'],
+    additionalFieldsToMask: ['code_mobile'],
     blocklistPaths: ['test'],
   })
 )
+
+// Library code will always pick up the environment variables from the .env file
+// only define the options you want to override
+
+// app.use(
+//   treblle({
+//     apiKey: process.env.TREBLLE_API_KEY_INTERNAL,
+//     projectId: process.env.TREBLLE_PROJECT_ID_INTERNAL,
+//     additionalFieldsToMask: ['code_mobile'],
+//     blocklistPaths: ['test'],
+//   })
+// )
 
 app.get('/', (req, res) => {
   res.send({ message: 'Hello World!' })

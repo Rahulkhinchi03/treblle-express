@@ -25,7 +25,6 @@ function treblle({
   return function treblleMiddleware(req, res, next) {
     // Track when this request was received.
     const requestStartTime = process.hrtime()
-
     // Intercept response body
     const originalSend = res.send
     res.send = function sendOverWrite(body) {
@@ -40,7 +39,7 @@ function treblle({
           ? blocklistPaths.test(req.path)
           : blocklistPaths.some((path) => req.path.startsWith(`/${path}`))
 
-      if (!isPathBlocked) {
+      if (isPathBlocked) {
         return next()
       }
 
@@ -95,7 +94,7 @@ function treblle({
       try {
         sendPayloadToTreblle(trebllePayload, apiKey)
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     })
     next()
